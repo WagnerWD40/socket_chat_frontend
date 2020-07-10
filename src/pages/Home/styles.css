@@ -1,14 +1,3 @@
-.Home-background {
-    background: linear-gradient(180deg, rgba(223,174,238,1) 0%, rgba(88,0,219,1) 100%);
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
 .Home-container {
     display: flex;
     flex-direction: column;
@@ -39,6 +28,7 @@
     color:#444;
     caret-color: #eee;
     box-shadow: 3px 3px 4px #222;
+    margin-bottom: 8px;
 }
 
 .Home-btn {

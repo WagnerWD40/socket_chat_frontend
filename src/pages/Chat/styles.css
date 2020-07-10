@@ -1,13 +1,3 @@
-.Chat-background {
-    background: linear-gradient(180deg, rgba(223,174,238,1) 0%, rgba(88,0,219,1) 100%);
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
 .Chat-navbar {
     background: linear-gradient(90deg,  rgba(0, 0, 0, .2) 0%, rgba(0, 0, 0, .4) 100%);
     box-shadow: 1px 1px 2px #222;
@@ -15,6 +5,32 @@
     max-height: 60px;
     width: 95%;
     flex: 1;
+}
+
+.Chat-navbar ul {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.Chat-navbar ul li {
+    flex-direction: column;
+    filter: drop-shadow(5px 5px 3px rgba(34, 2, 0, 0.2));
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.Chat-navbar ul li:hover {
+    filter: drop-shadow(5px 5px 3px rgba(34, 2, 0, 0.4));
+    transform: translateY(-3px);
+}
+
+.Chat-navbar ul li p {
+    text-align: center;
+    color: #25c5fa;
+    font-size: 10px;
 }
 
 .Chat-container {
@@ -43,14 +59,14 @@
   }
 
 .Chat-message-content {
-    background-color: rgba(132, 241, 150, .8);
+    background-color: rgba(172, 243, 184, 0.8);
     padding: 16px;
     border-radius: 8px;
     margin-top: 16px;
     margin-right: auto;
     margin-left: 16px;
     justify-self: flex-end;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .Chat-message-anotheruser {
@@ -83,7 +99,7 @@
 
 .Chat-message-btn-send {
     flex: 1;
-    background-color: rgba(88,0,219,1);
+    background-color: #25c5fa;
     outline: none;
     border: none;
     padding: 4px 16px;

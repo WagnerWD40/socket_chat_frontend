@@ -1,0 +1,14 @@
+.Dashboard-chatroom {
+    height: 80px;
+    width: 100%;
+    background-color: aqua;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ul {
+    width: 80%;
+    margin: 0 auto;
+}

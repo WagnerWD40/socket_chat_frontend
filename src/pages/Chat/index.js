@@ -1,60 +1,97 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './styles.css';
+import { useParams, useHistory } from 'react-router-dom';
+import MaterialIcon from 'material-icons-react';
+import { v4 as uuidv4 } from 'uuid';
+
+import Background from '../../components/Background';
+
+import useInputState from '../../hooks/useInputState';
 
 import {
-    subscribeToMessageService,
+    subscribeToMessageStream,
     sendMessage,
-} from '../../services/api';
+    exitChatroom,
+} from '../../services/socket';
 
-export default function Chat({ setActiveWindow, user, setUser }) {
+export default function Chat({ user, setUser }) {
     const [messages, setMessages] = useState([]);
-    const [messageInput, setMessageInput] = useState('');
+    const [messageInput, changeMessageInput, resetMessageInput] = useInputState('');
 
     const messageInputRef = useRef(null);
+    const messagesEndRef = useRef(null);
+    const { chatroomName } = useParams();
+    const history = useHistory();
 
     useEffect(() => {
-        subscribeToMessageService(messages, setMessages);
+        function updateMessages(message) {
+            setMessages([...messages, message]);
+        };
+
+        subscribeToMessageStream(chatroomName, updateMessages);
         messageInputRef.current.focus();
+        scrollToBottom();
+
+    }, [messages]);
+
+    useEffect(() => {
+        const payload = {
+            id: uuidv4(),
+            author: user,
+            message: `User ${user} enters the chatroom.`
+        };
+
+        sendMessage(payload, chatroomName);
+
     }, []);
 
-    function handleEnterKeyPress(event)  {
-        if (event.key === 'Enter') {
-            submitMessage();
+    useEffect(() => {
+        return () => {
+            exitChatroom(chatroomName);
         };
+    }, []);
+
+    function scrollToBottom() {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     };
-    
-    function submitMessage() {
-        const payload = {author: user, message: messageInput};
-        sendMessage(payload);
-        setMessages([...messages, payload]);
-        setMessageInput('');
 
-        // gotoBottom(".Chat-message-box");
+    function logout() {
+        history.push('/dashboard');
+    };
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        const payload = {
+            id: uuidv4(),
+            author: user,
+            message: messageInput
+        };
+
+        sendMessage(payload, chatroomName);
+        resetMessageInput();
         messageInputRef.current.focus();
-    }
-
-    function gotoBottom(id){
-        var element = document.querySelector(id);
-        element.scrollTop = element.scrollHeight - element.clientHeight;
-     }
+    };
 
     return (
-        <div class="Chat-background">
-            <nav class="Chat-navbar">
+        <Background>
+            <nav className="Chat-navbar">
                 <ul>
-                    <li><button 
-                            class="Chat-message-btn-send"
-                            onClick={() =>setActiveWindow('Home') }>Logout</button></li>
-                    <li>{user}</li>
+                    <li><p>User: </p><p>{user}</p></li>
+                    <li onClick={logout} className="Chat-navbar-icon">
+                        <MaterialIcon
+                            icon="meeting_room"
+                            color="#25c5fa"/>    
+                        <p>Sair</p>
+                    </li>
                 </ul>
             </nav>
-            <div class="Chat-container">
-                    <ul class="Chat-message-box">
+            <div className="Chat-container">
+                    <ul className="Chat-message-box" >
                         
                         {messages && messages.map(message => {
                             return (
-                                <li key={JSON.stringify(message)}
-                                    class={message.author === user
+                                <li key={message.id}
+                                    className={message.author === user
                                         ? "Chat-message-content"
                                         : "Chat-message-content Chat-message-anotheruser" }>
                                     <span>
@@ -63,23 +100,29 @@ export default function Chat({ setActiveWindow, user, setUser }) {
                                 </li>
                                 );
                             })}
-                        
+                        <div ref={messagesEndRef}></div>
                     </ul>
-                <div class="Chat-input-box">
-                    <input
-                        type="text"
-                        class="Chat-message-input"
-                        placeholder="Escreva sua mensagem..."
-                        ref={messageInputRef}
-                        onChange={ e => setMessageInput(e.target.value)}
-                        onKeyPress={handleEnterKeyPress}
-                        value={messageInput}/>
-                    <button
-                        type="button"
-                        class="Chat-message-btn-send"
-                        onClick={submitMessage}>Enviar</button>
+                <div className="Chat-input-box">
+                    <form>
+                        <input onSubmit={handleSubmit}
+                            type="text"
+                            className="Chat-message-input"
+                            placeholder="Escreva sua mensagem..."
+                            ref={messageInputRef}
+                            onChange={changeMessageInput}
+                            value={messageInput}/>
+                        <button
+                            type="submit"
+                            className="Chat-message-btn-send"
+                            onClick={handleSubmit}>
+                            <MaterialIcon
+                                icon="send"
+                                color="#FFF"
+                                size="20"/>
+                        </button>
+                    </form>
                 </div>
             </div>
-        </div>
+        </Background>
     );
 }
