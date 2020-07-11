@@ -33,6 +33,14 @@
     font-size: 10px;
 }
 
+.Dashboard-create-chatroom-form {
+
+}
+
+.Dashboard-create-chatroom-form-hidden {
+    display: none;
+}
+
 .Chat-container {
     display: flex;
     flex-direction: column;
