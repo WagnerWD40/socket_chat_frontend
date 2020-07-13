@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
 import './styles.css';
 import { useParams, useHistory } from 'react-router-dom';
 import MaterialIcon from 'material-icons-react';
@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Background from '../../components/Background';
 
 import useInputState from '../../hooks/useInputState';
+import { newMessage } from '../../utils/index';
+import { messageReducer } from '../../reducers/messageReducer';
 
 import {
     subscribeToMessageStream,
@@ -15,8 +17,8 @@ import {
 } from '../../services/socket';
 
 export default function Chat({ user, setUser }) {
-    const [messages, setMessages] = useState([]);
     const [messageInput, changeMessageInput, resetMessageInput] = useInputState('');
+    const [messages, dispatch] = useReducer(messageReducer, []);
 
     const messageInputRef = useRef(null);
     const messagesEndRef = useRef(null);
@@ -24,15 +26,11 @@ export default function Chat({ user, setUser }) {
     const history = useHistory();
 
     useEffect(() => {
-        function updateMessages(message) {
-            setMessages([...messages, message]);
-        };
-
-        subscribeToMessageStream(chatroomName, updateMessages);
+        subscribeToMessageStream(chatroomName, dispatch);
         messageInputRef.current.focus();
         scrollToBottom();
 
-    }, [messages]);
+    }, []);
 
     useEffect(() => {
         const payload = {
@@ -61,13 +59,7 @@ export default function Chat({ user, setUser }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        const payload = {
-            id: uuidv4(),
-            author: user,
-            message: messageInput
-        };
-
-        sendMessage(payload, chatroomName);
+        sendMessage(newMessage(messageInput), chatroomName);
         resetMessageInput();
         messageInputRef.current.focus();
     };
@@ -94,6 +86,8 @@ export default function Chat({ user, setUser }) {
                                     className={message.author === user
                                         ? "Chat-message-content"
                                         : "Chat-message-content Chat-message-anotheruser" }>
+                                            {/* TODO Message background color must be a random one from a list of colors, to supports multiple users in one chatscreen */}
+
                                     <span>
                                         <strong>{`${message.author}: `}</strong>{message.message}
                                     </span>

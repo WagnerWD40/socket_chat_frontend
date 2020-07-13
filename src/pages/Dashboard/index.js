@@ -23,8 +23,8 @@ export default function Dashboard({ user, setUser }) {
     const history = useHistory();
 
     useEffect(() => {
-        disconnect();
-        connect();
+        disconnect(); // TODO disconnection must fire only when user logout
+        connect(); // TODO needs to change, connection must be on logon screen
         subscribeToChatroomStream(chatrooms, setChatrooms);
     }, []);
 

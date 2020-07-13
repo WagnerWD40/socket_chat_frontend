@@ -1,5 +1,7 @@
 import socketio from 'socket.io-client';
 
+import { MESSAGE_ACTIONS } from '../reducers/actions/messageActions';
+
 const socket = socketio('http://localhost:8000', { autoConnect: false});
 
 function connect() {
@@ -18,8 +20,11 @@ function connect() {
     socket.on('sent available chatrooms', sentChatrooms => setChatrooms(sentChatrooms));
  };
 
- function subscribeToMessageStream(chatroomName, updateFunc) {
-    socket.on('send message', message => updateFunc(message));
+ function subscribeToMessageStream(chatroomName, dispatch) {
+    socket.on('send message', message => {
+       dispatch({ type: MESSAGE_ACTIONS.ADD, payload: { message } });
+       console.log('Receiving message:', message);
+      });
  };
 
  function createChatroom(chatroomName) {
