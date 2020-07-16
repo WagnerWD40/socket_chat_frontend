@@ -8,6 +8,16 @@ function newMessage(message) {
     };
 };
 
+function setToken(value) {
+    localStorage.setItem('token', value);
+};
+
+function getToken(value) {
+    return localStorage.getItem('token');
+};
+
 export {
     newMessage,
+    setToken,
+    getToken,
 };

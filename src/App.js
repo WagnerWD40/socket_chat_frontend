@@ -10,6 +10,7 @@ import {
 import Home from './pages/Home/index';
 import Chat from './pages/Chat/index';
 import Dashboard from './pages/Dashboard';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   const [user, setUser] = useState('');
@@ -17,12 +18,12 @@ function App() {
   return (
       <Router>
         <Switch>
-          <Route path="/chat/:chatroomName">
+          <PrivateRoute path="/chat/:chatroomName">
             <Chat user={user} setUser={setUser}/>
-          </Route>
-          <Route path="/dashboard">
+          </PrivateRoute>
+          <PrivateRoute path="/dashboard">
             <Dashboard user={user} setUser={setUser}/>
-          </Route>
+          </PrivateRoute>
           <Route path="/">
             <Home user={user} setUser={setUser}/>
           </Route>
